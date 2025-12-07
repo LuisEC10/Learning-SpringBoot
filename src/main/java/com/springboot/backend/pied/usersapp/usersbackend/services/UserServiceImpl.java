@@ -2,6 +2,8 @@ package com.springboot.backend.pied.usersapp.usersbackend.services;
 
 import com.springboot.backend.pied.usersapp.usersbackend.entities.User;
 import com.springboot.backend.pied.usersapp.usersbackend.repositories.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,12 @@ public class UserServiceImpl implements UserService {
     @Transactional(readOnly = true)
     public List<User> findAll() {
         return (List<User>)this.userRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<User> findAll(Pageable pageable) {
+        return this.userRepository.findAll(pageable);
     }
 
     @Override

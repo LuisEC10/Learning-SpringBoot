@@ -3,6 +3,9 @@ package com.springboot.backend.pied.usersapp.usersbackend.controllers;
 import com.springboot.backend.pied.usersapp.usersbackend.entities.User;
 import com.springboot.backend.pied.usersapp.usersbackend.services.UserService;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -16,7 +19,6 @@ import java.util.*;
 public class UserController {
 
     private final UserService userService;
-
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -24,6 +26,12 @@ public class UserController {
     @GetMapping
     public List<User> list(){
          return this.userService.findAll();
+    }
+
+    @GetMapping("/page/{page}")
+    public Page<User> listPageable(@PathVariable Integer page){
+        Pageable pageable = PageRequest.of(page,4);
+        return this.userService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
