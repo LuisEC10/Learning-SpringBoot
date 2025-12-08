@@ -1,6 +1,8 @@
 package com.springboot.backend.pied.usersapp.usersbackend.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.springboot.backend.pied.usersapp.usersbackend.models.IUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -13,7 +15,7 @@ import java.util.List;
 @JsonIgnoreProperties({"handler", "hibernateLazyInitializer"})
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements IUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -34,6 +36,10 @@ public class User {
 
     @NotBlank
     private String password;
+
+    @Transient // Campo que no es la base de datos
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY) // Escribir en la base de datos de ser necesario
+    private boolean admin;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -103,4 +109,9 @@ public class User {
     public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
+
+    public boolean isAdmin() {
+        return admin;
+    }
+    public void setAdmin(boolean admin) {}
 }

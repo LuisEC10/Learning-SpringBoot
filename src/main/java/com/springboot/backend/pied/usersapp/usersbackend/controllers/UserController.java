@@ -1,13 +1,17 @@
 package com.springboot.backend.pied.usersapp.usersbackend.controllers;
 
 import com.springboot.backend.pied.usersapp.usersbackend.entities.User;
+import com.springboot.backend.pied.usersapp.usersbackend.models.UserRequest;
 import com.springboot.backend.pied.usersapp.usersbackend.services.UserService;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +23,12 @@ import java.util.*;
 public class UserController {
 
     private final UserService userService;
-    public UserController(UserService userService) {
+
+    private PasswordEncoder passwordEncoder;
+
+    public UserController(UserService userService,PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -51,23 +59,17 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@Valid @RequestBody User user,BindingResult result, @PathVariable Long id){
+    public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id){
 
         if(result.hasErrors()){
             return validation(result);
         }
 
-        Optional<User> userOptional = this.userService.findById(id);
+        Optional<User> userOptional = this.userService.update(user, id);
         if(userOptional.isPresent()){
-            User userDB = userOptional.get();
-            userDB.setEmail(user.getEmail());
-            userDB.setLastname(user.getLastname());
-            userDB.setUsername(user.getUsername());
-            userDB.setName(user.getName());
-            userDB.setPassword(user.getPassword());
-            return ResponseEntity.status(HttpStatus.OK).body(this.userService.save(userDB));
+            return ResponseEntity.ok(userOptional.orElseThrow());
         }
-        return null;
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")

@@ -1,10 +1,12 @@
 package com.springboot.backend.pied.usersapp.usersbackend.services;
 
 import com.springboot.backend.pied.usersapp.usersbackend.entities.User;
+import com.springboot.backend.pied.usersapp.usersbackend.models.UserRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.lang.NonNull;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +18,8 @@ public interface UserService {
     Optional<User> findById(@NonNull Long id);
 
     User save(User user);
+
+    Optional<User> update(UserRequest user, Long id);
 
     void deleteById(Long id);
 }
